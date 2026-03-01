@@ -106,6 +106,106 @@
               <svg id="icon-dl-ok" class="hidden" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6ee7b7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
               <span id="dl-label" style="color:white">Download .conf</span>
             </button>
+
+          </div>
+          <button class="btn-reset" onclick="handleReset()">Generate Another</button>
+        </div>
+      </div>
+      <div class="footer">
+        <div class="footer-inner">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          Strict .conf format enforced
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="toast"></div>
+<script>
+let configData = null;
+
+function showToast(msg, type) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = (type ? type+' ' : '')+'show';
+  setTimeout(() => { t.className = type||''; }, 3200);
+}
+
+async function handleGenerate() {
+  const btn = document.getElementById('btn-generate');
+  btn.disabled = true;
+  document.getElementById('icon-zap').classList.add('hidden');
+  document.getElementById('icon-spin').classList.remove('hidden');
+  document.getElementById('btn-label').textContent = 'Generating...';
+  try {
+    const res = await fetch('/.netlify/functions/generate', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'}
+    });
+    if (!res.ok) {
+      let msg = 'Failed to generate';
+      try { const d = await res.json(); msg = d.message||msg; } catch(_){}
+      throw new Error(msg);
+    }
+    const data = await res.json();
+    configData = data.config;
+    const qrDiv = document.getElementById('qrcode');
+    qrDiv.innerHTML = '';
+    new QRCode(qrDiv, {text:configData,width:220,height:220,colorDark:'#09090b',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.M});
+    resetDownloadBtn();
+    document.getElementById('view-generate').classList.add('hidden');
+    document.getElementById('view-result').classList.remove('hidden');
+  } catch(err) {
+    showToast(err.message||'Failed','error');
+  } finally {
+    btn.disabled = false;
+    document.getElementById('icon-zap').classList.remove('hidden');
+    document.getElementById('icon-spin').classList.add('hidden');
+    document.getElementById('btn-label').textContent = 'Generate WGCF';
+  }
+}
+
+function handleDownload() {
+  if (!configData) return;
+  try {
+    const blob = new Blob([configData],{type:'application/octet-stream'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href=url; a.download='phoenix-tugyi.conf';
+    document.body.appendChild(a); a.click();
+    document.body.removeChild(a); URL.revokeObjectURL(url);
+    document.getElementById('btn-download').classList.add('downloaded');
+    document.getElementById('icon-dl').classList.add('hidden');
+    document.getElementById('icon-dl-ok').classList.remove('hidden');
+    const lbl = document.getElementById('dl-label');
+    lbl.textContent='Downloaded!'; lbl.style.color='#a7f3d0';
+    showToast('Downloaded phoenix-tugyi.conf','');
+  } catch(err){ showToast('Download failed','error'); }
+}
+
+function resetDownloadBtn() {
+  document.getElementById('btn-download').className='btn-action';
+  document.getElementById('icon-dl').classList.remove('hidden');
+  document.getElementById('icon-dl-ok').classList.add('hidden');
+  const lbl=document.getElementById('dl-label'); lbl.textContent='Download .conf'; lbl.style.color='white';
+}
+function handleReset() {
+  configData=null;
+  document.getElementById('qrcode').innerHTML='';
+  document.getElementById('view-result').classList.add('hidden');
+  document.getElementById('view-generate').classList.remove('hidden');
+}
+</script>
+</body>
+</html>        </div>
+        <div id="view-result" class="result-view hidden">
+          <div class="qr-container"><div id="qrcode"></div></div>
+          <div class="btn-gap">
+            <button class="btn-action" id="btn-download" onclick="handleDownload()">
+              <svg id="icon-dl" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              <svg id="icon-dl-ok" class="hidden" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6ee7b7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              <span id="dl-label" style="color:white">Download .conf</span>
+            </button>
             <button class="btn-action" id="btn-copy" onclick="handleCopy()">
               <svg id="icon-copy" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
               <svg id="icon-copy-ok" class="hidden" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#a5b4fc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>

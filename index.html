@@ -91,12 +91,19 @@
         </div>
       </div>
       <div class="main-area">
-        <div id="view-generate" style="width:100%">
+                <div id="view-generate" style="width:100%">
           <button class="btn-generate" id="btn-generate" onclick="handleGenerate()">
             <svg id="icon-zap" width="28" height="28" viewBox="0 0 24 24" fill="white"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
             <svg id="icon-spin" class="spin hidden" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
             <span id="btn-label">Generate WGCF</span>
           </button>
+
+          <!-- App Download Button (Added Here) -->
+          <a href="https://github.com/phonemawhein036/wireguard-phoenix/releases/download/v1.0.0/Phoenix.VPN.apk" class="btn-app-download" target="_blank" rel="noopener noreferrer">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            <span>App Download လုပ်ရန်</span>
+          </a>
+
         </div>
         <div id="view-result" class="result-view hidden">
           <div class="qr-container"><div id="qrcode"></div></div>
@@ -106,7 +113,11 @@
               <svg id="icon-dl-ok" class="hidden" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6ee7b7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
               <span id="dl-label" style="color:white">Download .conf</span>
             </button>
-
+            <button class="btn-action" id="btn-copy" onclick="handleCopy()">
+              <svg id="icon-copy" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              <svg id="icon-copy-ok" class="hidden" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#a5b4fc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              <span id="copy-label" style="color:white">Copy Config</span>
+            </button>
           </div>
           <button class="btn-reset" onclick="handleReset()">Generate Another</button>
         </div>
